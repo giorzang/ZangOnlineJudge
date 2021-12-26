@@ -1,0 +1,93 @@
+<% this.title = 'Thảo luận' %>
+<% include header %>
+<div class="padding">
+  <div class="ui grid">
+    <div class="row">
+      <div class="ten wide column">
+        <div class="ui breadcrumb">
+          <div class="section">Thảo luận</div>
+          <i class="right angle icon divider"></i>
+          <% if (problem) { %>
+            <div class="section"><a href="<%= syzoj.utils.makeUrl(['discussion', 'problems']) %>">Tiêu đề</a></div>
+            <i class="right angle icon divider"></i>
+            <div class="active section"><%= problem.title %></div>
+          <% } else if (in_problems) { %>
+            <div class="section">Tiêu đề</div>
+          <% } else { %>
+            <div class="section">Thảo luận chung</div>
+          <% } %>
+        </div>
+      </div>
+      <div class="six wide right aligned column" style="margin-bottom: 10px; ">
+        <% if (in_problems) { %>
+          <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['discussion', 'global']) %>" class="ui labeled icon mini blue button">
+            <i class="world icon"></i>
+            Thảo luận chung
+          </a>
+        <% } else { %>
+          <% if (problem) { %>
+            <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>" class="ui labeled icon mini blue button">
+              <i class="arrow left icon"></i>
+              Quay lại bài tập
+            </a>
+          <% } else { %>
+            <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['discussion', 'problems']) %>" class="ui labeled icon mini blue button">
+              <i class="file outline icon"></i>
+              Thảo luận bài tập
+            </a>
+          <% } %>
+          <% if (articles.length && user) { %>
+          <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['article', 0, 'edit'], problem ? { problem_id: problem.id } : null) %>" class="ui labeled icon mini button">
+              <i class="write icon"></i>
+              Tạo bài viết
+          </a>
+          <% } %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <% if (articles.length) { %>
+  <table class="ui very basic center aligned table">
+    <thead>
+      <tr>
+        <th class="left aligned" style="width: 45%; ">Tiêu đề</th>
+        <% if (in_problems) { %>
+          <th style="width: 20%; ">Tên bài tập</th>
+        <% } %>
+        <th style="width: 10%; ">Người đăng</th>
+        <th style="width: 10%; ">Số bình luận</th>
+        <th style="width: 15%; ">Bình luận mới nhất</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% for (let article of articles) { %>
+        <tr>
+            <td class="left aligned"><a href="<%= syzoj.utils.makeUrl(['article', article.id]) %>"><%= article.title %></a></td>
+            <% if (in_problems) { %>
+              <td><a href="<%= syzoj.utils.makeUrl(['discussion', 'problem', article.problem_id]) %>"><%= article.problem.title %></a></td>
+            <% } %>
+            <td><a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a><% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %></td>
+            <td><%= article.comments_num %></td>
+            <td><%= syzoj.utils.formatDate(article.sort_time) %></td>
+        </tr>
+    <% } %>
+    </tbody>
+  </table>
+  <br>
+  <% include page %>
+  <% } else { %>
+  <div class="ui placeholder segment">
+    <div class="ui icon header">
+      <i class="chat icon" style="margin-bottom: 20px; "></i>
+      Không có thảo luận nào
+    </div>
+    <% if (!in_problems && user) { %>
+    <a href="<%= syzoj.utils.makeUrl(['article', 0, 'edit'], problem ? { problem_id: problem.id } : null) %>" class="ui primary labeled icon button">
+      <i class="write icon"></i>
+      Tiêu đề
+    </a>
+    <% } %>
+  </div>
+  <% } %>
+</div>
+<% include footer %>

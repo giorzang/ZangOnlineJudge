@@ -1,0 +1,26 @@
+<%
+let items = {
+  info: 'Số liệu thống kê',
+  config: 'Cấu hình hệ thông',
+  privilege: 'Quản lý quyền',
+  rejudge: 'Chấm lại',
+  links: 'Liên kết khác',
+  rating: 'Quản lý điểm',
+  raw: 'Tệp cấu hình',
+  other: 'Các hoạt động khác'
+};
+%>
+<% this.title = items[this.adminPage] + ' - Trang quản trị'; %>
+<% include header %>
+<h1 style="text-align: center; margin-bottom: 27px; ">Trang quản trị</h1>
+<div class="ui grid">
+  <div class="three wide column">
+    <div class="ui vertical fluid tabular menu" style="height: 100%; ">
+    <% for (let x in items) { %>
+      <a class="item<% if (this.adminPage === x) { %> active<% } %>"<% if (this.adminPage !== x) { %> href="<%= syzoj.utils.makeUrl(['admin', x]) %>"<% } %>>
+        <%= items[x] %>
+      </a>
+    <% } %>
+    </div>
+  </div>
+  <div class="thirteen wide stretched column">

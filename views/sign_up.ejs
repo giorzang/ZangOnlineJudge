@@ -1,0 +1,114 @@
+<% this.title = 'Đăng ký' %>
+<% include header %>
+<div class="padding">
+  <h1>Đăng ký</h1>
+  <div class="ui error message" id="error" data-am-alert hidden>
+    <p id="error_info"></p>
+  </div>
+          <form class="ui form">
+                <div class="field">
+                    <label for="username">Tên tài khoản</label>
+                    <input type="text" placeholder="" id="username">
+                </div>
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="email" placeholder="" id="email">
+                </div>
+                <div class="two fields">
+                    <div class="field">
+                    <label class="ui header">Mật khẩu</label>
+                      <input type="password" placeholder="" id="password1">
+                    </div>
+                    <div class="field">
+                      <label class="ui header">Xác nhận mật khẩu</label>
+                      <input type="password" placeholder="" id="password2">
+                    </div>
+                </div>
+                <a id="sign_up" class="ui button" href="javascript:submit();">Đăng ký</a>
+            </form>
+</div>
+<script src="<%- lib('blueimp-md5/2.10.0/js/md5.min.js') %>"></script>
+<script type="text/javascript">
+function show_error(error) {
+    $("#error_info").text(error);
+    $("#error").show();
+}
+
+function success() {
+    alert("Đăng ký thành công!");
+    window.location.href = location.protocol + '//' + location.host + <%- serializejs(req.query.url || '/') %>;
+}
+
+function mail_required() {
+    alert("Email xác nhận đăng ký đã được gửi vào thùng rác trong hộp thư của bạn. Nhấp vào liên kết trong email để hoàn tất đăng ký.");
+    var s = $("#email").val();
+    var mailWebsite = 'https://mail.' + s.substring(s.indexOf('@') + 1, s.length);
+    if (mailWebsite === 'https://mail.gmail.com') mailWebsite = 'https://mail.google.com';
+    window.location.href = mailWebsite;
+}
+
+function submit() {
+    if ($("#password1").val() != $("#password2").val()) {
+        show_error("Hai mật khẩu đã nhập không khớp");
+        return;
+    }
+    password = md5($("#password1").val() + "syzoj2_xxx")
+    $("#sign_up").addClass("loading");
+    $.ajax({
+        url: '/api/sign_up',
+        type: 'POST',
+        async: true,
+        data: {
+          username: $("#username").val(),
+          password: password,
+          email: $("#email").val(),
+          prevUrl: <%- serializejs(req.query.url || '/') %>
+        },
+        success: function(data) {
+            error_code = data.error_code;
+            switch(error_code){
+                case 2001:
+                    show_error("Server không nhận được dữ liệu");
+                    break;
+                case 2005:
+                case 2002:
+                    show_error("Tên tài khoản chỉ cho phép chữ cái tiếng anh, số, dấu gạch ngang và dưới");
+                    break;
+                case 2007:
+                case 2003:
+                    show_error("Mật khẩu không được để trống");
+                    break;
+                case 2004:
+                case 2006:
+                    show_error("Vui lòng nhập email của bạn");
+                    break;
+                case 2008:
+                    show_error("Tên tài khoản đã được sử dụng");
+                    break;
+                case 2009:
+                    show_error("Địa chỉ email đã được sử dụng");
+                    break;
+                case 2010:
+                    show_error("Không gửi được email xác minh：\n" + data.message);
+                    break;
+                case 1:
+                    success();
+                    break;
+                case 2:
+                    mail_required();
+                    break;
+                default:
+                    show_error("Lỗi không xác định：" + JSON.stringify(data));
+                    break;
+            }
+            $("#sign_up").removeClass("loading");
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert(XMLHttpRequest.responseText);
+            show_error("Lỗi không xác định");
+            $("#sign_up").removeClass("loading");
+        }
+    });
+}
+</script>
+<% include footer %>

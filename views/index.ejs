@@ -1,0 +1,182 @@
+<% this.title = 'Trang chủ'; %>
+<% include header %>
+<div class="padding">
+  <div class="ui three column grid">
+    <div class="eleven wide column">
+      <h4 class="ui top attached block header"><i class="ui info icon"></i>Thông báo</h4>
+      <div class="ui bottom attached segment">
+        <table class="ui very basic table">
+          <thead>
+            <tr>
+              <th>Tiêu đề</th>
+              <th>Thời gian</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let item of notices) { %>
+                <tr>
+                    <td><a href="<%= item.url %>"><%= item.title %></a></td>
+                    <td><%= item.date %></td>
+                </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+      <h4 class="ui top attached block header"><i class="ui signal icon"></i>Xếp hạng</h4>
+      <div class="ui bottom attached segment">
+        <table class="ui very basic center aligned table" style="table-layout: fixed; ">
+          <thead>
+            <tr>
+	            <th style="width: 50px; ">#</th>
+	            <th style="width: 170px; ">Thành viên</th>
+	            <th>Chữ ký</th>
+            </tr>
+          </thead>
+          <script data-cfasync="false">
+          var lineHeight = 0;
+          (function () {
+            var div = document.createElement('div');
+            div.style.position = 'fixed';
+            div.style.left = -10000;
+            div.style.visibility = 'hidden';
+            div.innerText = '测试，Test.';
+            document.body.appendChild(div);
+            lineHeight = div.clientHeight;
+          })();
+          </script>
+          <tbody>
+            <%
+            let i = 0;
+            for (let user of ranklist) {
+              ++i;
+            %>
+                <tr>
+                    <td><b><%= i %></b></td>
+                    <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><%= user.username %></a><% if (user.nameplate) { %><%- user.nameplate %><% } %></td>
+                    <td style="font-content">
+                      <script id="user-infomation-script-<%= i %>" data-cfasync="false">
+                      (function () {
+                        var html = <%- serializejs(user.information) %>;
+                        var elem = document.createElement('div');
+                        elem.style = 'overflow: hidden; width: 100%; position: relative; ';
+                        elem.style.maxHeight = lineHeight + 'px';
+                        elem.innerHTML = html;
+                        var imgs = Array.prototype.slice.call(elem.getElementsByTagName('img'));
+                        for (var i in imgs) imgs[i].parentNode.removeChild(imgs[i]);
+                        var script = document.getElementById('user-infomation-script-<%= i %>');
+                        script.parentNode.replaceChild(elem, script);
+                      })();
+                      </script>
+                    </td>
+                </tr>
+             <%
+            } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="right floated five wide column">
+      <h4 class="ui top attached block header"><i class="ui rss icon"></i>Bài tập mới</h4>
+      <div class="ui bottom attached segment">
+	<table class="ui very basic center aligned table">
+          <thead>
+            <tr>
+              <th width="70%">Tên bài</th>
+              <th width="30%">Thời gian</th>
+            </tr>
+	  </thead>
+	  <tbody>
+	    <%
+	    for (let problem of problems) {
+	    %>
+	    <tr>
+	      <td><a href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>"><%= problem.title %></a></td>
+	      <td><%= problem.time %></td>
+	    </tr>
+	    <% } %>
+	  </tbody>
+	</table>
+      </div>
+        <%
+        if (fortune) {
+            let color;
+            if (fortune.fortune.indexOf('吉') != -1) color = '#0ccf00';
+            else if (fortune.fortune.indexOf('凶') != -1) color = '#f25e65';
+            else color = '#444';
+        %>
+        <% } %>
+      <h4 class="ui top attached block header"><i class="ui search icon"></i>Tìm kiếm bài tập</h4>
+      <div class="ui bottom attached segment">
+        <form action="<%= syzoj.utils.makeUrl(['problems', 'search']) %>" method="get">
+          <div class="ui search" style="width: 100%; ">
+            <div class="ui left icon input" style="width: 100%; ">
+              <input class="prompt" style="width: 100%; " type="text" placeholder="ID / Tên bài …" name="keyword">
+              <i class="search icon"></i>
+            </div>
+            <div class="results" style="width: 100%; "></div>
+          </div>
+        </form>
+      </div>
+      <h4 class="ui top attached block header"><i class="ui calendar icon"></i>Cuộc thi gần đây</h4>
+      <div class="ui bottom attached <% if (!contests || !contests.length) { %>center aligned <% } %>segment">
+        <% if (!contests || !contests.length) { %>
+        Chưa có cuộc thi nào được tổ chức
+        <% } else { %>
+        <table class="ui very basic center aligned table">
+          <thead>
+            <tr>
+              <th>Tên cuộc thi</th>
+              <th>Thời gian bắt đầu</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%
+            for (let contest of contests) {
+              let now = syzoj.utils.getCurrentDate();
+              let tag = '';
+            %>
+            <tr>
+              <% if (now < contest.start_time) { %>
+                <% tag = '<span class="ui header"><div class="ui mini red label">Chưa bắt đầu</div></span>' %>
+              <% } else if (now >= contest.start_time && now < contest.end_time) { %>
+                <% tag = '<span class="ui header"><div class="ui mini green label">Đang diễn ra</div></span>' %>
+              <% } else { %>
+                <% tag = '<span class="ui header"><div class="ui mini grey label">Đã kết thúc</div></span>' %>
+              <% } %>
+              <td><a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>"><%= contest.title %> <%- tag %></a></td>
+              <td><%= syzoj.utils.formatDate(contest.start_time) %></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+        <% } %>
+      </div>
+      <% if (typeof links !== 'undefined' && links && links.length) { %>
+      <h4 class="ui top attached block header font-content"><i class="ui linkify icon"></i>Liên kết</h4>
+      <div class="ui bottom attached segment">
+        <ul style="margin: 0; padding-left: 20px; ">
+          <% for (let link of links) { %>
+            <li><a href="<%= link.url %>"><%= link.title %></a></li>
+          <% } %>
+        </ul>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+<script>
+$(function () {
+  $('.ui.search').search({
+    debug: true,
+    saveRemoteData: false,
+    apiSettings: {
+      url: '/api/v2/search/problems/{query}',
+      cache: false
+    },
+    fields: {
+      title: 'name'
+    }
+  });
+});
+</script>
+<% include footer %>

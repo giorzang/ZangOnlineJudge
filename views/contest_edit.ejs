@@ -1,0 +1,120 @@
+<% this.title = contest.id ? 'Chỉnh sửa cuộc thi' : 'Tạo cuộc thi' %>
+<% include header %>
+<div class="padding">
+        <form action="<%= syzoj.utils.makeUrl(['contest', contest.id, 'edit']) %>" method="post">
+          <div class="ui form">
+              <div class="field">
+                <label>Tên</label>
+                <input type="text" name="title" value="<%= contest.title %>">
+              </div>
+              <div class="field">
+                <label>Mô tả</label>
+                <input type="text" name="subtitle" class="markdown-edit" value="<%= contest.subtitle %>">
+              </div>
+            <div class="field">
+                <label>Danh sách bài tập</label>
+                <select class="ui fluid search dropdown" multiple="" id="search_problems" name="problems">
+                <% for (let problem of problems) { %>
+                <option value="<%= problem.id %>" selected>#<%= problem.id %>. <%= problem.title %></option>
+                <% } %>
+                </select>
+            </div>
+            <div class="field">
+                <label>Người tổ chức</label>
+                <select class="ui fluid search dropdown" multiple="" id="search_admins" name="admins">
+                <% for (let admin of admins) { %>
+                <option value="<%= admin.id %>" selected><%= admin.username %></option>
+                <% } %>
+                </select>
+            </div>
+            <div class="inline fields">
+              <label>Hệ thống cuộc thi</label>
+              <div class="field">
+                <div class="ui radio checkbox">
+                  <input <% if (contest.id) { %>disabled <% } %>type="radio" name="type" id="type-noi" value="noi"<% if (contest.type === 'noi') { %> checked="checked"<% } %>>
+                  <label for="type-noi">NOI</label>
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui radio checkbox">
+                  <input <% if (contest.id) { %>disabled <% } %>type="radio" name="type" id="type-ioi" value="ioi"<% if (contest.type === 'ioi') { %> checked="checked"<% } %>>
+                  <label for="type-ioi">IOI</label>
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui radio checkbox">
+                  <input <% if (contest.id) { %>disabled <% } %>type="radio" name="type" id="type-acm" value="acm"<% if (contest.type === 'acm') { %> checked="checked"<% } %>>
+                  <label for="type-acm">ICPC</label>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+                <label>Cấu hình bài thi - Định dạng : <code>{"ID bài tập": Điểm tối đa}</code> - Ví dụ : <code>{"1":100,"196":10}</code></label>
+                <input type="text" name="ranking_params" value="<%= contest.ranklist ? JSON.stringify(contest.ranklist.ranking_params) : '' %>">
+            </div>
+            <div class="field">
+                <label>Thông báo cuộc thi</label>
+                <textarea rows="5" name="information" class="markdown-edit"><%= contest.information %></textarea>
+            </div>
+            <div class="field">
+                <label>Thời gian bắt đầu</label>
+                <input type="text" name="start_time" value="<%= syzoj.utils.formatDate(contest.start_time || syzoj.utils.getCurrentDate()) %>">
+            </div>
+            <div class="field">
+                <label>Thời gian kết thúc</label>
+                <input type="text" name="end_time" value="<%= syzoj.utils.formatDate(contest.end_time || syzoj.utils.getCurrentDate()) %>">
+            </div>
+            <div class="inline field">
+              <label class="ui header">Công khai</label>
+              <div class="ui toggle checkbox">
+                <input type="checkbox"<% if (contest.is_public) { %> checked<% } %> name="is_public">
+                <label><span style="visibility: hidden; ">　</span></label>
+              </div>
+            </div>
+            <div class="inline field">
+              <label class="ui header">Ẩn thống kê</label>
+              <div class="ui toggle checkbox">
+                <input type="checkbox"<% if (contest.hide_statistics) { %> checked<% } %> name="hide_statistics">
+                <label><span style="visibility: hidden; ">　</span></label>
+              </div>
+            </div>
+            <div style="text-align: center; "><button id="submit_button" type="submit" class="ui labeled icon blue button"><i class="ui edit icon"></i>Xác nhận</button></div>
+          </div>
+        </form>
+<script>
+$(function () {
+  $('#search_admins')
+    .dropdown({
+      debug: true,
+      saveRemoteData: false,
+      apiSettings: {
+        url: '/api/v2/search/users/{query}',
+        onResponse: function (response) {
+          var a = $('#search_admins').val().map(function (x) { return parseInt(x) });
+          if (response.results) {
+            response.results = response.results.filter(function(x){ return !a.includes(parseInt(x.value))});
+          }
+          return response;
+        },
+        cache: false
+      }
+    });
+  $('#search_problems')
+    .dropdown({
+      debug: true,
+      saveRemoteData: false,
+      apiSettings: {
+        url: '/api/v2/search/problems/{query}',
+        onResponse: function (response) {
+          var a = $('#search_problems').val().map(function (x) { return parseInt(x) });
+          if (response.results) {
+            response.results = response.results.filter(function(x) {return !a.includes(parseInt(x.value));});
+          }
+          return response;
+        },
+        cache: false
+      }
+    });
+});
+</script>
+<% include footer %>

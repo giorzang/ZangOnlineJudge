@@ -1,0 +1,110 @@
+<% this.title = article.title + ' - Bài viết'; %>
+<% include header %>
+<style type="text/css" xmlns:style="http://www.w3.org/1999/xhtml">
+.small{
+  font-size: 0.7em;
+}
+</style>
+<div class="padding">
+  <div class="ui breadcrumb">
+    <div class="section">Thảo luận</div>
+    <i class="right angle icon divider"></i>
+    <% if (problem) { %>
+      <div class="section"><a href="<%= syzoj.utils.makeUrl(['discussion', 'problems']) %>">Thảo luận bài tập</a></div>
+      <i class="right angle icon divider"></i>
+      <a href="<%= syzoj.utils.makeUrl(['discussion', 'problem', problem.id]) %>" class="active section"><%= problem.title %></a>
+    <% } else { %>
+      <a href="<%= syzoj.utils.makeUrl(['discussion', 'global']) %>" class="section">Thảo luận chung</a>
+    <% } %>
+  </div>
+  <h1><%= article.title %></h1>
+ 	<p style="margin-bottom: -5px; ">
+	<img style="vertical-align: middle; margin-bottom: 2px; margin-right: 2px; " src="<%= syzoj.utils.gravatar(article.user.email, 34) %>" width="17" height="17">
+	<b style="margin-right: 30px; "><a class="black-link" href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a><% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %></b>
+	<b style="margin-right: 30px; "><i class="calendar icon"></i> <%= syzoj.utils.formatDate(article.public_time) %></b>
+	<% if (article.public_time !== article.update_time) { %><b style="margin-right: 30px; "><i class="edit icon"></i> <%= syzoj.utils.formatDate(article.update_time) %></b><% } %>
+        <% if (article.allowedEdit) { %>
+        <a style="margin-top: -4px; " class="ui mini right floated labeled icon button" href="<%= syzoj.utils.makeUrl(['article', article.id, 'edit']) %>"><i class="ui edit icon"></i>Sửa</a>
+        <a style="margin-top: -4px; margin-right: 3px; " class="ui mini red right floated labeled icon button" onclick="$('#modal-delete').modal('show')"><i class="ui trash icon"></i>Xóa</a>
+        <div class="ui basic modal right floated" id="modal-delete">
+          <div class="ui icon header">
+            <i class="trash icon"></i>
+            <p style="margin-top: 15px; ">Xóa bài viết</p>
+          </div>
+          <div class="content" style="text-align: center; ">
+            <p>Bạn có chắc chắn muốn xóa bài viết này?</p>
+          </div>
+          <div class="actions">
+            <div class="ui red basic cancel inverted button">
+              <i class="remove icon"></i>
+              Không
+            </div>
+            <a class="ui green ok inverted button" href-post="<%= syzoj.utils.makeUrl(['article', article.id, 'delete']) %>">
+              <i class="checkmark icon"></i>
+              Có
+            </a>
+          </div>
+        </div>
+        <% } %>
+ 	</p>
+  <div class="ui existing segment">
+	  <div id="content" class="font-content"><%- article.content %></div>
+  </div>
+  <% if (comments.length) { %>
+  <div class="ui comments" style="max-width: none;">
+    <h3 class="ui dividing header">Có <%= commentsCount %> bình luận</h3>
+    <% for (let comment of comments) { %>
+      <div class="comment">
+        <a class="avatar">
+          <img src="<%= syzoj.utils.gravatar(comment.user.email, 120) %>">
+        </a>
+        <div class="content">
+          <a class="author" href="<%= syzoj.utils.makeUrl(['user', comment.user_id]) %>"><%= comment.user.username %></a><% if (comment.user.nameplate) { %><%- comment.user.nameplate %><% } %>
+          <div class="metadata">
+            <span class="date"><%= syzoj.utils.formatDate(comment.public_time) %></span>
+          </div>
+          <div class="text font-content" style="min-height: 19.5px; "><%- comment.content %></div>
+          <% if (comment.allowedEdit) { %>
+            <div class="actions"><a onclick="$('#modal-delete-<%= comment.id %>').modal('show')">Xóa</a></div>
+            <div class="ui basic modal" id="modal-delete-<%= comment.id %>">
+              <div class="ui icon header">
+                <i class="trash icon"></i>
+                <p style="margin-top: 15px; ">Xóa bình luận</p>
+              </div>
+              <div class="content" style="text-align: center; ">
+                <p>Bạn có chắc chắn xóa bình luận này không?</p>
+              </div>
+              <div class="actions">
+                <div class="ui red basic cancel inverted button">
+                  <i class="remove icon"></i>
+                  Không
+                </div>
+                <a class="ui green ok inverted button" href-post="<%= syzoj.utils.makeUrl(['article', article.id, 'comment', comment.id, 'delete']) %>">
+                  <i class="checkmark icon"></i>
+                  Có
+                </a>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+  </div>
+  <div style="margin-bottom: 50px; ">
+    <% include page %>
+  </div>
+  <% } %>
+    <% if (article.allowedComment) { %>
+    <form class="ui reply form" method="post" action="<%= syzoj.utils.makeUrl(['article', article.id, 'comment']) %>">
+      <div class="field">
+        <textarea name="comment" class="markdown-edit"></textarea>
+      </div>
+      <div style="text-align: center; ">
+      <button id="submit_button" type="submit" class="ui labeled submit icon button">
+        <i class="icon edit"></i> Gửi bình luận
+      </button>
+      </div>
+    </form>
+  <% } %>
+</div>
+<% include footer %>

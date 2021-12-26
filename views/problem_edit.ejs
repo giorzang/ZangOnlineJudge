@@ -1,0 +1,116 @@
+<% this.title = 'Chỉnh sửa bài tập'; %>
+<% include header %>
+<style type="text/css">
+  .problem_header{
+    text-align: center;
+  }
+</style>
+<div class="padding">
+    <form method="post" action="<%= syzoj.utils.makeUrl(['problem', req.params.id, 'edit']) %>">
+      <div class="ui top attached tabular menu">
+        <a class="item active" data-tab="edit">Chỉnh sửa</a>
+        <a class="item" data-tab="preview" id="preview_tab">Xem trước</a>
+      </div>
+      <div class="ui bottom attached tab segment active" data-tab="edit">
+        <div class="ui form"><div class="field">
+          <% if (problem.allowedManage) { %>
+            <label for="id">
+              <% if (problem.new) { %>
+                ID bài tập
+              <% } else { %>
+                ID bài tập
+              <% } %>
+            </label>
+            <input type="text" id="id" name="id" placeholder="<% if (problem.new) { %>Để trống để hệ thống chọn<% } else { %>Để trống nếu không sửa đổi<% } %>" value="<%= problem.id ? problem.id : '' %>">
+
+            <div style="margin-top: 15px; "></div>
+          <% } %>
+          <label for="title">Tiêu đề</label>
+          <input class="font-content" type="text" id="title" name="title" value="<%= problem.title %>">
+        
+          <label style="margin-top: 15px; " for="description">Đề bài</label>
+          <textarea class="markdown-edit" rows="15" id="description" name="description"><%= problem.description %></textarea>
+          <label style="margin-top: 15px; " for="input_format">Định dạng đầu vào</label>
+          <textarea class="markdown-edit" rows="10" id="input" name="input_format"><%= problem.input_format %></textarea>
+          <label style="margin-top: 15px; " for="output_format">Định dạng đầu ra</label>
+          <textarea class="markdown-edit" rows="10" id="output" name="output_format"><%= problem.output_format %></textarea>
+          <label style="margin-top: 15px; ">Ví dụ</label>
+          <textarea class="markdown-edit" rows="15" id="example" name="example"><%= problem.example %></textarea>
+          <label style="margin-top: 15px; ">Phạm vi dữ liệu và mẹo</label>
+          <textarea class="markdown-edit" rows="10" id="hint" name="limit_and_hint"><%= problem.limit_and_hint %></textarea>
+
+          <label style="margin-top: 15px; ">Thẻ</label>
+          <select class="ui fluid search dropdown" multiple="" id="search_tags" name="tags">
+            <% for (let tag of problem.tags) { %>
+              <option value="<%= tag.id %>" selected><%= tag.name %></option>
+            <% } %>
+          </select>
+          <div class="ui <% if (problem.is_anonymous) { %>checked <% } %>checkbox" style="margin-top: 15px; ">
+            <input <% if (problem.is_anonymous) { %>checked=""<% } %> name="is_anonymous" type="checkbox">
+            <label><strong>Tải lên ẩn danh</strong></label>
+            <p style="margin-top: 5px; ">Sau khi chọn, tên người tải lên sẽ không được hiển thị.</p>
+          </div>
+        </div></div>
+      </div>
+      <div class="ui bottom attached tab segment" data-tab="preview" id="preview">
+        <h1 class="ui header problem_header" id="pv-title"></h1>
+        <h2 class="ui header">Đề bài</h2>
+        <div class="font-content" id="pv-description"></div>
+        <h2 class="ui header">Định dạng đầu vào</h2>
+        <div class="font-content" id="pv-input"></div>
+        <h2 class="ui header">Định dạng đầu ra</h2>
+        <div class="font-content" id="pv-output"></div>
+        <h2 class="ui header">Ví dụ</h2>
+        <div class="font-content" id="pv-example"></div>
+        <h2 class="ui header">Phạm vi dữ liệu và mẹo</h2>
+        <div class="font-content" id="pv-hint"></div>
+      </div>
+      <% if (problem.allowedEdit) { %>
+      <div style="text-align: center; ">
+      <button type="submit" id="submit_button" class="ui labeled submit icon button">
+        <i class="icon edit"></i> Xác nhận
+      </button>
+      </div>
+      <% } %>
+    </form>
+</div>
+<script type="text/javascript">
+$(function () {
+    function render(output, input) {
+      $.post('/api/markdown', { s: input.val() }, function (s) {
+        output.html(s);
+      });
+    }
+    $("#preview_tab").click(function () {
+      $("#pv-title").text($("#title").val());
+      $("#pv-description, #pv-input, #pv-output, #pv-example, #pv-hint").text('Loading...');
+      render($("#pv-description"), $("#description"));
+      render($("#pv-input"), $("#input"));
+      render($("#pv-output"), $("#output"));
+      render($("#pv-example"), $("#example"));
+      render($("#pv-hint"), $("#hint"));
+    });
+    $('.tabular.menu .item').tab();
+});
+</script>
+<script>
+$(function () {
+  $('#search_tags')
+    .dropdown({
+      debug: true,
+      saveRemoteData: false,
+      apiSettings: {
+        url: '/api/v2/search/tags/{query}',
+        onResponse: function (response) {
+          var a = $('#search_tags').val().map(function (x) { return parseInt(x) });
+          if (response.results) {
+            response.results = response.results.filter(function(x) { return !a.includes(parseInt(x.value));});
+          }
+          return response;
+        },
+        cache: false
+      }
+    });
+});
+</script>
+<% include footer %>

@@ -1,0 +1,33 @@
+<% this.adminPage = 'rating'; %>
+<% include admin_header %>
+<form action="<%= syzoj.utils.makeUrl(['admin', 'rating', 'add']) %>" method="post" class="ui form">
+  <div class="field">
+    <label>Cuộc thi</label>
+    <div class="ui fluid search selection dropdown">
+      <input type="hidden" name="contest">
+      <i class="dropdown icon"></i>
+      <div class="default text">Chọn một cuộc thi</div>
+      <div class="menu">
+        <% for (const contest of contests) { %>
+          <div class="item" data-value="<%= contest.id %>"><%= contest.title %></div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <button class="ui blue labeled icon button" name="type" value="doit" type="submit"><i class="ui calculator icon"></i>Tính điểm cho cuộc thi này</button>
+</form>
+
+Lưu ý: Nếu bạn xóa điểm của một cuộc thi, tất cả các cuộc thi phía trên cũng sẽ bị xóa, và điểm sẽ được khôi phục về trạng thái trước khi thi!
+<form action="<%= syzoj.utils.makeUrl(['admin', 'rating', 'delete']) %>" method="POST">
+  <div class="ui relaxed divided list">
+    <% for (const calc of calcs) { %>
+      <div class="item">
+        <%= calc.contest.title %>
+        <button name="calc_id" value="<%= calc.id %>" type="submit" style="color: #000; padding: 0; border: none; background: none;"><i class="remove icon"></i></button>
+      </div>
+    <% } %>
+  </div>
+</div>
+</form>
+<% include admin_footer %>
+<script>$('.selection.dropdown').dropdown();</script>

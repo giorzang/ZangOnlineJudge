@@ -1,0 +1,26 @@
+<% this.title = 'Nhập bài tập'; %>
+<% include header %>
+<div class="padding">
+  <div style="margin-bottom: 30px; ">
+    <h1 style="margin-bottom: 10px; ">Nhập bài tập</h1>
+    Nhập câu hỏi từ một trang khác đang chạy SYZOJ.
+  </div>
+
+  <form class="ui form" action="<%= syzoj.utils.makeUrl(['problem', problem.id, 'import']) %>" method="post">
+      <% if (problem.allowedManage) { %>
+          <div class="field">
+              <label>ID bài tập</label>
+              <input type="text" name="id" value="<%= problem.id ? problem.id : '' %>" placeholder="Để trống để hệ thống chọn" <%= problem.new ? '' : 'disabled' %>>
+          </div>
+      <% } %>
+      <div class="field">
+          <label>Liên kết bài tập</label>
+          <input type="text" name="url" placeholder="Ví dụ：http://example.com/problem/1">
+      </div>
+      <div style="text-align: center; ">
+      <button type="submit" class="ui labeled submit icon button">
+        <i class="icon edit"></i> Xác nhận
+      </button>
+      </div>
+  </form>
+<% include footer %>
