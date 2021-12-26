@@ -63,8 +63,8 @@
       </a>
     <% } %>
   </code-box>
-  <code-box v-if="detailResult && detailResult.compile" no-escape title="编译信息" v-bind:content="detailResult.compile.message"></code-box>
-  <code-box v-if="detailResult" title="系统信息" v-bind:content="detailResult.systemMessage"></code-box>
+  <code-box v-if="detailResult && detailResult.compile" no-escape title="Thông tin biên dịch" v-bind:content="detailResult.compile.message"></code-box>
+  <code-box v-if="detailResult" title="Thông báo hệ thống" v-bind:content="detailResult.systemMessage"></code-box>
 
   <div class="ui styled fluid accordion" :class="singleSubtask ? 'single-subtask' : '' " v-if="detailResult && detailResult.judge && detailResult.judge.subtasks">
     <template v-for="subtask, $index in detailResult.judge.subtasks">
@@ -72,13 +72,13 @@
         <div class="ui grid">
           <div class="three wide column">
             <i class="dropdown icon"></i>
-            子任务 #{{ $index + 1 }}
+            Subtask #{{ $index + 1 }}
           </div>
           <div class="four wide column">
             <status-label :status="getSubtaskResult(subtask)" :indetail="true" :progress="getProgress($index)"></status-label>
           </div>
           <div class="three wide column" v-if="subtask.score != null">
-            得分：<span style="font-weight: normal; ">{{ Math.trunc(subtask.score) }}</span>
+            Điểm：<span style="font-weight: normal; ">{{ Math.trunc(subtask.score) }}</span>
           </div>
         </div>
       </div>
@@ -89,34 +89,34 @@
               <div class="ui grid">
                 <div class="three wide column">
                     <i class="dropdown icon"></i>
-                    测试点 #{{ $caseIndex + 1 }}
+                    Test #{{ $caseIndex + 1 }}
                 </div>
                 <div class="four wide column">
                   <status-label :status="getTestcaseStatus(curCase)" :indetail="true"></status-label>
                 </div>
                 <template v-if="checkTestcaseOK(curCase)">
                   <div class="three wide column">
-                      得分：<span style="font-weight: normal; ">{{ Math.trunc(curCase.result.scoringRate * 100) }}</span>
+                      Điểm：<span style="font-weight: normal; ">{{ Math.trunc(curCase.result.scoringRate * 100) }}</span>
                   </div>
                   <div class="three wide column" v-if="curCase.result.time != null && curCase.result.time !== NaN">
-                      用时：<span style="font-weight: normal; ">{{ curCase.result.time }} ms</span>
+                      Thời gian：<span style="font-weight: normal; ">{{ curCase.result.time }} ms</span>
                   </div>
                   <div class="three wide column" v-if="curCase.result.memory != null && curCase.result.memory !== NaN">
-                      内存：<span style="font-weight: normal; ">{{ curCase.result.memory }} KiB</span>
+                      Bộ nhớ：<span style="font-weight: normal; ">{{ curCase.result.memory }} KiB</span>
                   </div>
                 </template>
               </div>
             </div>
               <div class="content">
                 <template v-if="checkTestcaseOK(curCase)">
-                  <code-box v-if="curCase.result.input" :title="'输入文件（<span style=\'font-family: monospace; \'>'+ curCase.result.input.name +'</span>）'" :content="curCase.result.input.content" :download="<%= serializejs(syzoj.utils.makeUrl(['problem', info.problemId, 'testdata', 'download'])) %> + '/' + curCase.result.input.name"></code-box>
-                  <code-box v-if="curCase.result.output" :title="'答案文件（<span style=\'font-family: monospace; \'>'+ curCase.result.output.name +'</span>）'" :content="curCase.result.output.content" :download="<%= serializejs(syzoj.utils.makeUrl(['problem', info.problemId, 'testdata', 'download'])) %> + '/' + curCase.result.output.name"></code-box>
-                  <code-box title="用户输出" :content="curCase.result.userOutput"></code-box>
-                  <code-box title="标准错误流" :content="curCase.result.userError"></code-box>
-                  <code-box title="Special Judge 信息" :content="curCase.result.spjMessage"></code-box>
-                  <code-box title="系统信息" :content="curCase.result.systemMessage"></code-box>
+                  <code-box v-if="curCase.result.input" :title="'Tệp đầu vào（<span style=\'font-family: monospace; \'>'+ curCase.result.input.name +'</span>）'" :content="curCase.result.input.content" :download="<%= serializejs(syzoj.utils.makeUrl(['problem', info.problemId, 'testdata', 'download'])) %> + '/' + curCase.result.input.name"></code-box>
+                  <code-box v-if="curCase.result.output" :title="'Tệp đầu ra（<span style=\'font-family: monospace; \'>'+ curCase.result.output.name +'</span>）'" :content="curCase.result.output.content" :download="<%= serializejs(syzoj.utils.makeUrl(['problem', info.problemId, 'testdata', 'download'])) %> + '/' + curCase.result.output.name"></code-box>
+                  <code-box title="Đầu ra của bài nộp" :content="curCase.result.userOutput"></code-box>
+                  <code-box title="Standard error stream" :content="curCase.result.userError"></code-box>
+                  <code-box title="Thông tin Special Judge" :content="curCase.result.spjMessage"></code-box>
+                  <code-box title="Thông báo hệ thống" :content="curCase.result.systemMessage"></code-box>
                 </template>
-                <code-box title="错误信息" :content="curCase.errorMessage"></code-box>
+                <code-box title="Thông báo lỗi" :content="curCase.errorMessage"></code-box>
               </div>
           </template>
         </div>

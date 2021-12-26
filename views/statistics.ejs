@@ -1,13 +1,13 @@
 <%
-this.title = '统计';
+this.title = 'Thống kê';
 let types = {
-  fastest: problem.type === 'submit-answer' ? null : '最快',
-  slowest: problem.type === 'submit-answer' ? null : '最慢',
-  shortest: problem.type === 'submit-answer' ? '最小' : '最短',
-  longest: problem.type === 'submit-answer' ? '最大' : '最长',
-  earliest: '最早',
-  min: problem.type === 'submit-answer' ? null : '最小内存',
-  max: problem.type === 'submit-answer' ? null : '最大内存'
+  fastest: problem.type === 'submit-answer' ? null : 'Nhanh nhất',
+  slowest: problem.type === 'submit-answer' ? null : 'Chậm nhất',
+  shortest: problem.type === 'submit-answer' ? 'Nhỏ nhất' : 'Ngắn nhất',
+  longest: problem.type === 'submit-answer' ? 'Lớn nhất' : 'Dài nhất',
+  earliest: 'Sớm nhất',
+  min: problem.type === 'submit-answer' ? null : 'Bộ nhớ nhỏ nhất',
+  max: problem.type === 'submit-answer' ? null : 'Bộ nhớ lớn nhất'
 };
 %>
 <% include header %>
@@ -32,7 +32,7 @@ function getColorOfScore(score) {
 </script>
 <div class="padding">
   <h1 style="text-align: center; margin-bottom: 30px; ">
-    满分提交
+    Bài nộp đã đạt
     <span class="ui header" style="margin-left: 10px; ">
       <div class="ui compact menu">
         <div class="ui simple dropdown item">
@@ -52,19 +52,19 @@ function getColorOfScore(score) {
   <table class="ui very basic center aligned table" style="white-space: nowrap; ">
     <thead>
       <tr>
-          <th>编号</th>
-          <th>题目</th>
-          <th>状态</th>
-          <th>分数</th>
+          <th>ID bài tập</th>
+          <th>Tên bài</th>
+          <th>Trạng thái</th>
+          <th>Điểm</th>
           <% if (problem.type !== 'submit-answer') { %>
-            <th>总时间</th>
-            <th>内存</th>
-            <th>代码</th>
+            <th>Thời gian</th>
+            <th>Bộ nhớ</th>
+            <th>Ngôn ngữ / Độ dài code</th>
           <% } else { %>
-            <th>答案文件</th>
+            <th>Tệp đáp án</th>
           <% } %>
-          <th>提交者</th>
-          <th>提交时间</th>
+          <th>Người nộp</th>
+          <th>Thời gian nộp</th>
       </tr>
     </thead>
     <tbody>
@@ -99,7 +99,7 @@ function getColorOfScore(score) {
   <% include page %>
   <br>
   <h1 style="text-align: center; ">
-    得分分布
+    Biểu đồ điểm
   </h1>
   <div id="score-distribution-chart" style="height: 250px;"></div>
   <script type="text/javascript">
@@ -114,13 +114,13 @@ function getColorOfScore(score) {
   	labels: ['number'],
   	hoverCallback: function(index, options, content, row) {
   		var scr = row.score;
-  		return '<div class="morris-hover-row-label">分数：' + scr + '</div><div class="morris-hover-point">数量：' + row.count + '</div>';
+  		return '<div class="morris-hover-row-label">Điểm：' + scr + '</div><div class="morris-hover-point">Số bài：' + row.count + '</div>';
   	},
   	resize: true
   });
   </script>
   <h1 style="text-align: center; ">
-    前缀和
+    Tiền tố
   </h1>
   <div id="score-distribution-chart-pre" style="height: 250px;"></div>
   <script type="text/javascript">
@@ -146,13 +146,13 @@ function getColorOfScore(score) {
   	},
   	hoverCallback: function(index, options, content, row) {
   		var scr = row.score / 100;
-      return '<div class="morris-hover-row-label">分数：≤ ' + scr + '</div><div class="morris-hover-point">数量：' + row.count + '</div>';
+      return '<div class="morris-hover-row-label">Điểm：≤ ' + scr + '</div><div class="morris-hover-point">Số bài：' + row.count + '</div>';
   	},
   	resize: true
   });
   </script>
   <h1 style="text-align: center; ">
-    后缀和
+    Hậu tố
   </h1>
   <div id="score-distribution-chart-suf" style="height: 250px;"></div>
   <script type="text/javascript">
@@ -178,7 +178,7 @@ function getColorOfScore(score) {
   	},
   	hoverCallback: function(index, options, content, row) {
   		var scr = row.score / 100;
-      return '<div class="morris-hover-row-label">分数：≥ ' + scr + '</div><div class="morris-hover-point">数量：' + row.count + '</div>';
+      return '<div class="morris-hover-row-label">Điểm：≥ ' + scr + '</div><div class="morris-hover-point">Số bài：' + row.count + '</div>';
   	},
   	resize: true
   });
