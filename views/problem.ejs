@@ -78,7 +78,7 @@ if (contest) {
       <div class="ui buttons">
         <% if (typeof contest !== 'undefined' && contest) { %>
           <% if (!contest.ended) { %>
-            <a class="small ui primary button" href="#submit_code">Xác nhận</a>
+            <a class="small ui primary button" href="#submit_code">Nộp bài</a>
           <% } else { %>
             <a class="small ui primary button" href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>">Chuyển đến Bài tập</a>
           <% } %>
@@ -293,7 +293,7 @@ if (contest) {
                   </div>
                 </div>
               </div>
-              <div class="ui center aligned vertical segment" style="padding-bottom: 0; "><button type="submit" class="ui labeled icon button"><i class="ui edit icon"></i>Xác nhận</button></div>
+              <div class="ui center aligned vertical segment" style="padding-bottom: 0; "><button type="submit" class="ui labeled icon button"><i class="ui edit icon"></i>Nộp bài</button></div>
             <% } else { %>
               <input name="language" type="hidden" id="form">
               <input name="code" type="hidden">
@@ -330,7 +330,7 @@ if (contest) {
                 </div>
               </div>
               <div class="ui center aligned vertical segment" style="padding-bottom: 0; ">
-                <button type="submit" class="ui labeled icon button"><i class="ui edit icon"></i>Xác nhận</button>
+                <button type="submit" class="ui labeled icon button"><i class="ui edit icon"></i>Nộp bài</button>
               </div>
             <% } %>
           </form>
