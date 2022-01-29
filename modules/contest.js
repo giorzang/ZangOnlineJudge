@@ -245,6 +245,7 @@ app.get('/contest/:id/ranklist', async (req, res) => {
     if (!contest.is_public && (!res.locals.user || (!res.locals.user.is_admin && !contest.admins.includes(res.locals.user.id.toString())))) throw new ErrorMessage('Cuộc thi chưa mở，hãy kiên nhẫn đợi (´∀ `)');
 
     if ([contest.allowedSeeingResult() && contest.allowedSeeingOthers(),
+    contest.isEnded(),
     await contest.isSupervisior(curUser)].every(x => !x))
       throw new ErrorMessage('Bạn không có quyền thực hiện thao tác này.');
 
@@ -298,10 +299,10 @@ app.get('/contest/:id/ranklist', async (req, res) => {
 function getDisplayConfig(contest) {
   return {
     showScore: contest.allowedSeeingScore(),
-    showUsage: false,
+    showUsage: true,
     showCode: false,
     showResult: contest.allowedSeeingResult(),
-    showOthers: contest.allowedSeeingOthers(),
+    showOthers: true, //contest.allowedSeeingOthers(),
     showDetailResult: contest.allowedSeeingTestcase(),
     showTestdata: false,
     inContest: true,
