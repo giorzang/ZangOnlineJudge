@@ -306,7 +306,7 @@ function getDisplayConfig(contest) {
     showDetailResult: contest.allowedSeeingTestcase(),
     showTestdata: false,
     inContest: true,
-    showRejudge: false
+    showRejudge: true;
   };
 }
 
